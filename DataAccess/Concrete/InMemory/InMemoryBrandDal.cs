@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -15,11 +16,11 @@ namespace DataAccess.Concrete.InMemory
         {
             _brands = new List<Brand>
             {
-                new Brand{Id = 1, BrandName = "Mercedes"},
-                new Brand{Id = 2, BrandName = "BMW"},
-                new Brand{Id = 3, BrandName = "Volvo"},
-                new Brand{Id = 4, BrandName = "Audi"},
-                new Brand{Id = 5, BrandName = "Dodge"},
+                new Brand{Id = 1, Name = "Mercedes"},
+                new Brand{Id = 2, Name = "BMW"},
+                new Brand{Id = 3, Name = "Volvo"},
+                new Brand{Id = 4, Name = "Audi"},
+                new Brand{Id = 5, Name = "Dodge"},
             };
         }
 
@@ -42,13 +43,23 @@ namespace DataAccess.Concrete.InMemory
         {
             var brandToUpdate = _brands.SingleOrDefault(b=>b.Id == brand.Id);
             brandToUpdate.Id = brand.Id;
-            brandToUpdate.BrandName = brand.BrandName;
+            brandToUpdate.Name = brand.Name;
         }
 
         public void Delete(Brand brand)
         {
             var brandToDelete = _brands.SingleOrDefault(b => b.Id == brand.Id);
             _brands.Remove(brandToDelete);
+        }
+
+        public List<Brand> GetAll(Expression<Func<Brand, bool>> filter = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Brand Get(Expression<Func<Brand, bool>> filter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

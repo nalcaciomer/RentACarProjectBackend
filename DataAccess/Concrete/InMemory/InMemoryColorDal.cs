@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -15,11 +16,11 @@ namespace DataAccess.Concrete.InMemory
         {
             _colors = new List<Color>
             {
-                new Color{Id = 1, ColorName = "Siyah"},
-                new Color{Id = 2, ColorName = "Beyaz"},
-                new Color{Id = 3, ColorName = "Gri"},
-                new Color{Id = 4, ColorName = "Kırmızı"},
-                new Color{Id = 5, ColorName = "Mavi"}
+                new Color{Id = 1, Name = "Siyah"},
+                new Color{Id = 2, Name = "Beyaz"},
+                new Color{Id = 3, Name = "Gri"},
+                new Color{Id = 4, Name = "Kırmızı"},
+                new Color{Id = 5, Name = "Mavi"}
             };
         }
         public void Add(Color color)
@@ -33,9 +34,19 @@ namespace DataAccess.Concrete.InMemory
             _colors.Remove(colorToDelete);
         }
 
+        public Color Get(Expression<Func<Color, bool>> filter)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Color> GetAll()
         {
             return _colors;
+        }
+
+        public List<Color> GetAll(Expression<Func<Color, bool>> filter = null)
+        {
+            throw new NotImplementedException();
         }
 
         public Color GetById(int colorId)
@@ -47,7 +58,7 @@ namespace DataAccess.Concrete.InMemory
         {
             var colorToUpdate = _colors.SingleOrDefault(c => c.Id == color.Id);
             colorToUpdate.Id = color.Id;
-            colorToUpdate.ColorName = color.ColorName;
+            colorToUpdate.Name = color.Name;
         }
     }
 }
