@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Core.DataAccess;
-using Core.Utilities.Results;
 using Entities.Concrete;
 using Entities.DTOs;
 
@@ -10,6 +9,10 @@ namespace DataAccess.Abstract
 {
     public interface ICarDal : IEntityRepository<Car>
     {
-        List<CarDetailDto> GetCarDetails();
+        List<CarDetailDto> GetCarsDetails();
+        List<CarDetailDto> GetCarDetails(int id);
+        List<CarDetailDto> GetCarsDetailsByBrand(int id);
+        List<CarDetailDto> GetCarsDetailsByColor(int id);
+        List<CarDetailDto> GetCarsDetailsByBrandAndColor(int brandId, int colorId);
     }
 }

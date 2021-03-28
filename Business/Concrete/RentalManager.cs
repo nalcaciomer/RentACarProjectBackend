@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -39,15 +41,38 @@ namespace Business.Concrete
             return new SuccessDataResult<Rental>(_rentalDal.Get(r=> r.Id == rentalId));
         }
 
-        public IResult Add(Rental rental)
+        public IResult CheckCarAvailable(Rental rental)
         {
-            var result = _rentalDal.GetAll(r => r.CarId == rental.CarId && r.ReturnDate > DateTime.Now).ToList();
-            if (result.Count != 0)
+            var result = _rentalDal.GetAll(r => r.CarId == rental.CarId).OrderBy(r=>r.ReturnDate).ToList();
+            if (result[0].ReturnDate == null)
             {
                 return new ErrorResult();
             }
-            _rentalDal.Add(rental);
-            return new SuccessResult(Messages.RentalAdded);
+            else
+            {
+                result = result.OrderByDescending(r=>r.ReturnDate).ToList();
+                if (result[0].ReturnDate > rental.RentDate)
+                {
+                    return new ErrorResult();
+                }
+                else
+                {
+                    return new SuccessResult();
+                }
+            }
+        }
+
+        [ValidationAspect(typeof(RentalValidator))]
+        public IResult Add(Rental rental)
+        {
+            if (CheckCarAvailable(rental).Success)
+            {
+                _rentalDal.Add(rental);
+                return new SuccessResult(Messages.RentalAdded);
+            }
+
+            return new ErrorResult(Messages.TheCarIsInUse);
+
         }
 
         public IResult Update(Rental rental)

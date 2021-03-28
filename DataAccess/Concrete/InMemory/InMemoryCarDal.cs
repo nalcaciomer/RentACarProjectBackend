@@ -71,5 +71,32 @@ namespace DataAccess.Concrete.InMemory
             carToUpdate.DailyPrice = car.DailyPrice;
             carToUpdate.Description = car.Description;
         }
+
+        public List<CarDetailDto> GetCarsDetails()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<CarDetailDto> GetCarDetails(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<CarDetailDto> GetCarsDetailsByBrand(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        
+
+        public List<CarDetailDto> GetCarsDetailsByColor(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<CarDetailDto> GetCarsDetailsByBrandAndColor(int brandId, int colorId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
