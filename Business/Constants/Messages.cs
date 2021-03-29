@@ -44,5 +44,13 @@ namespace Business.Constants
         public static string RentalDeleted = "Kiralama işlemi sistemden başarıyla silindi";
         public static string RentalDetailsListed = "Kiralama detayları listelendi";
         public static string TheCarIsInUse = "Araba kullanımda olduğu için kiralanamaz";
+
+        public static string CarsImagesListed = "Arabaların görüntüleri listelendi";
+        public static string CarImageListed = "İstenilen görüntü listelendi";
+        public static string CarImagesListed = "Arabaya ait görüntüler listelendi";
+        public static string CarImageAdded = "Görüntü sisteme başarıyla eklendi";
+        public static string CarImageUpdated = "Görüntü bilgileri başarıyla güncellendi";
+        public static string CarImageDeleted = "Görüntü sistemden başarıyla silindi";
+        public static string CarImageLimitExceeded = "Arabanın görüntü limiti aşıldı";
     }
 }

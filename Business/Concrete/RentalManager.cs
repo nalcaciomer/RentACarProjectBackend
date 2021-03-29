@@ -6,6 +6,7 @@ using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -41,38 +42,18 @@ namespace Business.Concrete
             return new SuccessDataResult<Rental>(_rentalDal.Get(r=> r.Id == rentalId));
         }
 
-        public IResult CheckCarAvailable(Rental rental)
-        {
-            var result = _rentalDal.GetAll(r => r.CarId == rental.CarId).OrderBy(r=>r.ReturnDate).ToList();
-            if (result[0].ReturnDate == null)
-            {
-                return new ErrorResult();
-            }
-            else
-            {
-                result = result.OrderByDescending(r=>r.ReturnDate).ToList();
-                if (result[0].ReturnDate > rental.RentDate)
-                {
-                    return new ErrorResult();
-                }
-                else
-                {
-                    return new SuccessResult();
-                }
-            }
-        }
-
         [ValidationAspect(typeof(RentalValidator))]
         public IResult Add(Rental rental)
         {
-            if (CheckCarAvailable(rental).Success)
+            IResult result =  BusinessRules.Run(CheckCarAvailable(rental));
+            if (result != null)
             {
-                _rentalDal.Add(rental);
-                return new SuccessResult(Messages.RentalAdded);
+                return result;
             }
 
-            return new ErrorResult(Messages.TheCarIsInUse);
-
+            _rentalDal.Add(rental);
+            return new SuccessResult(Messages.RentalAdded);
+            
         }
 
         public IResult Update(Rental rental)
@@ -90,6 +71,27 @@ namespace Business.Concrete
         public IDataResult<List<RentalDetailDto>> GetRentalDetails()
         {
             return new SuccessDataResult<List<RentalDetailDto>>(_rentalDal.GetRentalDetails(), Messages.RentalDetailsListed);
+        }
+
+        private IResult CheckCarAvailable(Rental rental)
+        {
+            var result = _rentalDal.GetAll(r => r.CarId == rental.CarId).OrderBy(r => r.ReturnDate).ToList();
+            if (result[0].ReturnDate == null)
+            {
+                return new ErrorResult(Messages.TheCarIsInUse);
+            }
+            else
+            {
+                result = result.OrderByDescending(r => r.ReturnDate).ToList();
+                if (result[0].ReturnDate > rental.RentDate)
+                {
+                    return new ErrorResult(Messages.TheCarIsInUse);
+                }
+                else
+                {
+                    return new SuccessResult();
+                }
+            }
         }
     }
 }
