@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Helpers;
 using Core.Utilities.Results;
@@ -42,6 +45,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarImage>>(CheckIfCarImageNull(carId).Data);
         }
 
+        [SecuredOperation("carImages.add,admin")]
+        [ValidationAspect(typeof(CarImageValidator))]
         public IResult Add(IFormFile file,CarImage carImage)
         {
             var result = BusinessRules.Run(CheckCarImagesLimitExceeded(carImage.CarId));
@@ -56,6 +61,8 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CarImageAdded);
         }
 
+        [SecuredOperation("carImages.update,admin")]
+        [ValidationAspect(typeof(CarImageValidator))]
         public IResult Update(IFormFile file, CarImage carImage)
         {
             IResult result = BusinessRules.Run(CheckCarImagesLimitExceeded(carImage.CarId));
@@ -72,6 +79,8 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+        [SecuredOperation("carImages.delete,admin")]
+        [ValidationAspect(typeof(CarImageValidator))]
         public IResult Delete(CarImage carImage)
         {
             FileHelper.Delete(carImage.ImagePath);
@@ -94,13 +103,15 @@ namespace Business.Concrete
         {
             try
             {
-                string path = @"\uploads/default.jpg";
+                string path = @"\uploads/defaultCar.jpg";
                 var result = _carImageDal.GetAll(i => i.CarId == carId).Any();
                 if (!result)
                 {
-                    List<CarImage> carImages = new List<CarImage>();
-                    carImages.Add(new CarImage { CarId = carId, ImagePath = path, UploadDate = DateTime.Now });
-                    return new SuccessDataResult<List<CarImage>>(carImages);
+                    List<CarImage> carImage = new List<CarImage>
+                    {
+                        new CarImage {CarId = carId, ImagePath = path, UploadDate = DateTime.Now}
+                    };
+                    return new SuccessDataResult<List<CarImage>>(carImage);
                 }
             }
             catch (Exception e)

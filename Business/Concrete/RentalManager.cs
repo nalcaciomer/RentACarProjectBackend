@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
@@ -42,6 +43,7 @@ namespace Business.Concrete
             return new SuccessDataResult<Rental>(_rentalDal.Get(r=> r.Id == rentalId));
         }
 
+        [SecuredOperation("admin,user")]
         [ValidationAspect(typeof(RentalValidator))]
         public IResult Add(Rental rental)
         {
@@ -56,12 +58,15 @@ namespace Business.Concrete
             
         }
 
+        [SecuredOperation("admin,user")]
+        [ValidationAspect(typeof(RentalValidator))]
         public IResult Update(Rental rental)
         {
             _rentalDal.Update(rental);
             return new SuccessResult(Messages.RentalUpdated);
         }
 
+        [SecuredOperation("admin,user")]
         public IResult Delete(Rental rental)
         {
             _rentalDal.Delete(rental);
@@ -75,23 +80,13 @@ namespace Business.Concrete
 
         private IResult CheckCarAvailable(Rental rental)
         {
-            var result = _rentalDal.GetAll(r => r.CarId == rental.CarId).OrderBy(r => r.ReturnDate).ToList();
-            if (result[0].ReturnDate == null)
+            var result = _rentalDal.Get(r => (r.CarId == rental.CarId && r.RentDate > rental.ReturnDate && r.ReturnDate == null) || (rental.RentDate < r.ReturnDate));
+            if (result != null)
             {
                 return new ErrorResult(Messages.TheCarIsInUse);
             }
-            else
-            {
-                result = result.OrderByDescending(r => r.ReturnDate).ToList();
-                if (result[0].ReturnDate > rental.RentDate)
-                {
-                    return new ErrorResult(Messages.TheCarIsInUse);
-                }
-                else
-                {
-                    return new SuccessResult();
-                }
-            }
+
+            return new SuccessResult(Messages.RentalSuccessful);
         }
     }
 }
