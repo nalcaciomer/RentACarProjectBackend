@@ -7,6 +7,7 @@ using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Business;
 using Core.Utilities.Helpers;
@@ -25,16 +26,20 @@ namespace Business.Concrete
         {
             _carImageDal = carImageDal;
         }
+
+        [CacheAspect]
         public IDataResult<List<CarImage>> GetAll()
         {
             return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(), Messages.CarsImagesListed);
         }
 
+        [CacheAspect]
         public IDataResult<CarImage> GetById(int carImageId)
         {
             return new SuccessDataResult<CarImage>(_carImageDal.Get(i=> i.Id == carImageId), Messages.CarImageListed);
         }
 
+        [CacheAspect]
         public IDataResult<List<CarImage>> GetByCarId(int carId)
         {
             var result = BusinessRules.Run(CheckIfCarImageNull(carId));
@@ -47,6 +52,7 @@ namespace Business.Concrete
 
         [SecuredOperation("carImages.add,admin")]
         [ValidationAspect(typeof(CarImageValidator))]
+        [CacheRemoveAspect("ICarImageService.Get")]
         public IResult Add(IFormFile file,CarImage carImage)
         {
             var result = BusinessRules.Run(CheckCarImagesLimitExceeded(carImage.CarId));
@@ -63,6 +69,7 @@ namespace Business.Concrete
 
         [SecuredOperation("carImages.update,admin")]
         [ValidationAspect(typeof(CarImageValidator))]
+        [CacheRemoveAspect("ICarImageService.Get")]
         public IResult Update(IFormFile file, CarImage carImage)
         {
             IResult result = BusinessRules.Run(CheckCarImagesLimitExceeded(carImage.CarId));
@@ -81,6 +88,7 @@ namespace Business.Concrete
 
         [SecuredOperation("carImages.delete,admin")]
         [ValidationAspect(typeof(CarImageValidator))]
+        [CacheRemoveAspect("ICarImageService.Get")]
         public IResult Delete(CarImage carImage)
         {
             FileHelper.Delete(carImage.ImagePath);
