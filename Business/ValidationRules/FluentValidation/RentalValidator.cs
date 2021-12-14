@@ -10,7 +10,7 @@ namespace Business.ValidationRules.FluentValidation
     {
         public RentalValidator()
         {
-            RuleFor(r=> r.ReturnDate).GreaterThanOrEqualTo(r=>r.RentDate).When(r=>r.ReturnDate.HasValue);
+            RuleFor(r=> r.ReturnDate).GreaterThan(r=>r.RentDate).When(r=>r.ReturnDate.HasValue);
         }
     }
 }

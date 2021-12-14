@@ -96,21 +96,21 @@ namespace Business.Concrete
         }
 
         [CacheAspect]
-        public IDataResult<List<CarDetailDto>> GetCarsDetailsByBrand(int id)
+        public IDataResult<List<CarDetailDto>> GetCarsDetailsByBrand(string brandName)
         {
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarsDetailsByBrand(id), Messages.CarDetailListed);
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarsDetailsByBrand(brandName), Messages.CarDetailListed);
         }
 
         [CacheAspect]
-        public IDataResult<List<CarDetailDto>> GetCarsDetailsByColor(int id)
+        public IDataResult<List<CarDetailDto>> GetCarsDetailsByColor(string colorName)
         {
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarsDetailsByColor(id), Messages.CarDetailListed);
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarsDetailsByColor(colorName), Messages.CarDetailListed);
         }
 
         [CacheAspect]
-        public IDataResult<List<CarDetailDto>> GetCarsDetailsByBrandAndColor(int brandId, int colorId)
+        public IDataResult<List<CarDetailDto>> GetCarsDetailsByBrandAndColor(string brandName, string colorName)
         {
-            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarsDetailsByBrandAndColor(brandId, colorId), Messages.CarDetailListed);
+            return new SuccessDataResult<List<CarDetailDto>>(_carDal.GetCarsDetailsByBrandAndColor(brandName, colorName), Messages.CarDetailListed);
         }
     }
 }

@@ -62,7 +62,6 @@ namespace Business.Concrete
 
             _rentalDal.Add(rental);
             return new SuccessResult(Messages.RentalAdded);
-            
         }
 
         [SecuredOperation("admin,user")]
@@ -70,6 +69,12 @@ namespace Business.Concrete
         [CacheRemoveAspect("IRentalService.Get")]
         public IResult Update(Rental rental)
         {
+            IResult result = BusinessRules.Run(CheckCarAvailable(rental));
+            if (result != null)
+            {
+                return result;
+            }
+
             _rentalDal.Update(rental);
             return new SuccessResult(Messages.RentalUpdated);
         }
@@ -90,7 +95,7 @@ namespace Business.Concrete
 
         private IResult CheckCarAvailable(Rental rental)
         {
-            var result = _rentalDal.Get(r => (r.CarId == rental.CarId && r.RentDate > rental.ReturnDate && r.ReturnDate == null) || (rental.RentDate < r.ReturnDate));
+            var result = _rentalDal.Get(r => (r.CarId == rental.CarId && r.RentDate > rental.ReturnDate && r.ReturnDate == null) || (r.CarId == rental.CarId && rental.RentDate < r.ReturnDate));
             if (result != null)
             {
                 return new ErrorResult(Messages.TheCarIsInUse);

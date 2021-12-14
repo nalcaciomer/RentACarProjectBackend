@@ -14,6 +14,7 @@ using Core.Utilities.Helpers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace Business.Concrete
@@ -21,10 +22,12 @@ namespace Business.Concrete
     public class CarImageManager : ICarImageService
     {
         private ICarImageDal _carImageDal;
+        private ICarService _carService;
 
-        public CarImageManager(ICarImageDal carImageDal)
+        public CarImageManager(ICarImageDal carImageDal, ICarService carService)
         {
             _carImageDal = carImageDal;
+            _carService = carService;
         }
 
         [CacheAspect]
@@ -48,6 +51,34 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<CarImage>>(result.Message);
             }
             return new SuccessDataResult<List<CarImage>>(CheckIfCarImageNull(carId).Data);
+        }
+
+        public IDataResult<List<CarImageDto>> GetDtoByCarId(int carId)
+        {
+            var result = BusinessRules.Run(CheckIfCarImageNull(carId));
+            if (result != null)
+            {
+                return new ErrorDataResult<List<CarImageDto>>(result.Message);
+            }
+
+            var carImage = CheckIfCarImageNull(carId).Data;
+            var carDetails = _carService.GetCarDetails(carId).Data;
+            List<CarImageDto> carImageDto = new List<CarImageDto>();
+
+            for (int i = 0; i < carImage.Count; i++)
+            {
+                var imageDto = new CarImageDto
+                {
+                    Id = carId, BrandName = carDetails[0].BrandName, ColorName = carDetails[0].ColorName,
+                    DailyPrice = carDetails[0].DailyPrice, Description = carDetails[0].Description,
+                    ModelYear = carDetails[0].ModelYear, ImagePath = carImage[i].ImagePath,
+                    UploadDate = carImage[i].UploadDate
+                };
+                carImageDto.Add(imageDto);
+            }
+
+
+            return new SuccessDataResult<List<CarImageDto>>(carImageDto);
         }
 
         [SecuredOperation("carImages.add,admin")]

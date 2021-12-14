@@ -40,7 +40,7 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
-        public List<CarDetailDto> GetCarsDetailsByBrand(int id)
+        public List<CarDetailDto> GetCarsDetailsByBrand(string brandName)
         {
             using (ReCapContext context = new ReCapContext())
             {
@@ -49,13 +49,13 @@ namespace DataAccess.Concrete.EntityFramework
                         on c.BrandId equals b.Id
                     join clr in context.Colors
                         on c.ColorId equals clr.Id
-                             where b.Id == id
+                             where b.Name == brandName
                     select new CarDetailDto { Id = c.Id, BrandName = b.Name, ColorName = clr.Name, ModelYear = c.ModelYear, DailyPrice = c.DailyPrice, Description = c.Description };
                 return result.ToList();
             }
         }
 
-        public List<CarDetailDto> GetCarsDetailsByColor(int id)
+        public List<CarDetailDto> GetCarsDetailsByColor(string colorName)
         {
             using (ReCapContext context = new ReCapContext())
             {
@@ -64,13 +64,13 @@ namespace DataAccess.Concrete.EntityFramework
                         on c.BrandId equals b.Id
                     join clr in context.Colors
                         on c.ColorId equals clr.Id
-                             where clr.Id == id
+                             where clr.Name == colorName
                     select new CarDetailDto { Id = c.Id, BrandName = b.Name, ColorName = clr.Name, ModelYear = c.ModelYear, DailyPrice = c.DailyPrice, Description = c.Description };
                 return result.ToList();
             }
         }
 
-        public List<CarDetailDto> GetCarsDetailsByBrandAndColor(int brandId, int colorId)
+        public List<CarDetailDto> GetCarsDetailsByBrandAndColor(string brandName, string colorName)
         {
             using (ReCapContext context = new ReCapContext())
             {
@@ -79,7 +79,7 @@ namespace DataAccess.Concrete.EntityFramework
                         on c.BrandId equals b.Id
                     join clr in context.Colors
                         on c.ColorId equals clr.Id
-                    where ((b.Id == brandId) && (clr.Id == colorId))
+                    where b.Name == brandName && clr.Name == colorName
                              select new CarDetailDto { Id = c.Id, BrandName = b.Name, ColorName = clr.Name, ModelYear = c.ModelYear, DailyPrice = c.DailyPrice, Description = c.Description };
                 return result.ToList();
             }
