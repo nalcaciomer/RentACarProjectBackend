@@ -9,7 +9,7 @@ using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.JWT;
 using Entities.DTOs;
 
-namespace DataAccess.Concrete.EntityFramework
+namespace Business.Concrete
 {
     public class AuthManager : IAuthService
     {
@@ -41,7 +41,7 @@ namespace DataAccess.Concrete.EntityFramework
 
         public IDataResult<User> Login(UserForLoginDto userForLoginDto)
         {
-            var userToCheck = _userService.GetByMail(userForLoginDto.Email);
+            var userToCheck = _userService.GetByEmail(userForLoginDto.Email);
             if (userToCheck == null)
             {
                 return new ErrorDataResult<User>(Messages.UserNotFound);
@@ -57,7 +57,7 @@ namespace DataAccess.Concrete.EntityFramework
 
         public IResult UserExists(string email)
         {
-            if (_userService.GetByMail(email).Data != null)
+            if (_userService.GetByEmail(email).Data != null)
             {
                 return new ErrorResult(Messages.UserAlreadyExists);
             }

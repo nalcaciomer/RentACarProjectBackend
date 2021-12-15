@@ -2,10 +2,6 @@
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -89,17 +85,5 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result.Message);
         }
-
-        [HttpGet("getdetailbycarid")]
-        public IActionResult GetDetailByCarId(int carId)
-        {
-            var result = _carImageService.GetDtoByCarId(carId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result.Message);
-        }
-
     }
 }

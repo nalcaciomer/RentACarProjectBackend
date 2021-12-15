@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Core.Entities.Abstract;
+﻿using Core.Entities;
 
 namespace Entities.Concrete
 {
@@ -9,5 +6,6 @@ namespace Entities.Concrete
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
     }
 }
