@@ -22,7 +22,7 @@ namespace Business.Concrete
             _rentalDal = rentalDal;
         }
 
-        //[SecuredOperation("admin,user")]
+        [SecuredOperation("admin,user")]
         [ValidationAspect(typeof(RentalValidator))]
         [CacheRemoveAspect("IRentalService.Get")]
         public IResult Add(Rental rental)
@@ -37,7 +37,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.RentalAdded);
         }
 
-        //[SecuredOperation("admin,user")]
+        [SecuredOperation("admin,user")]
         [ValidationAspect(typeof(RentalValidator))]
         [CacheRemoveAspect("IRentalService.Get")]
         public IResult Update(Rental rental)
@@ -46,7 +46,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.RentalUpdated);
         }
 
-        //[SecuredOperation("admin,user")]
+        [SecuredOperation("admin,user")]
         [CacheRemoveAspect("IRentalService.Get")]
         public IResult Delete(Rental rental)
         {
@@ -87,7 +87,7 @@ namespace Business.Concrete
         private IResult CheckCarAvailability(Rental rental)
         {
             var result = _rentalDal.GetAll(r => (r.CarId == rental.CarId && rental.RentDate >= r.RentDate && rental.RentDate <= r.ReturnDate) || (r.CarId == rental.CarId && rental.ReturnDate >= r.RentDate && rental.ReturnDate <= r.ReturnDate) || (r.CarId == rental.CarId && rental.RentDate >= r.RentDate && r.ReturnDate == null));
-            if (result != null)
+            if (result.Count > 0)
             {
                 return new ErrorResult(Messages.TheCarIsNotAvailable);
             }
