@@ -13,6 +13,7 @@ using Core.Utilities.Helpers;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace Business.Concrete
@@ -20,10 +21,12 @@ namespace Business.Concrete
     public class CarImageManager : ICarImageService
     {
         private ICarImageDal _carImageDal;
+        private ICarService _carService;
 
-        public CarImageManager(ICarImageDal carImageDal)
+        public CarImageManager(ICarImageDal carImageDal, ICarService carService)
         {
             _carImageDal = carImageDal;
+            _carService = carService;
         }
 
         [CacheAspect]
@@ -47,6 +50,27 @@ namespace Business.Concrete
                 return new ErrorDataResult<List<CarImage>>(result.Message);
             }
             return new SuccessDataResult<List<CarImage>>(CheckIfCarImageNull(carId).Data);
+        }
+
+        [CacheAspect]
+        public IDataResult<List<CarImageDto>> GetDetails()
+        {
+            return new SuccessDataResult<List<CarImageDto>>(_carImageDal.GetDetails(), Messages.CarsImagesListed);
+        }
+
+        [CacheAspect]
+        public IDataResult<List<CarImageDto>> GetDetailsById(int id)
+        {
+            return new SuccessDataResult<List<CarImageDto>>(_carImageDal.GetDetails(c=> c.Id == id), Messages.CarsImagesListed);
+        }
+
+        [CacheAspect]
+        public IDataResult<List<CarImageDto>> GetDetailsByCarId(int carId)
+        {
+            var carDetailDto = _carService.GetDetailsById(carId).Data;
+            string brandName = carDetailDto[0].BrandName;
+            string colorName = carDetailDto[0].ColorName;
+            return new SuccessDataResult<List<CarImageDto>>(_carImageDal.GetDetails(c => c.BrandName == brandName && c.ColorName == colorName), Messages.CarsImagesListed);
         }
 
         [SecuredOperation("admin, user")]
