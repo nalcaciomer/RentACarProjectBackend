@@ -67,10 +67,12 @@ namespace Business.Concrete
         [CacheAspect]
         public IDataResult<List<CarImageDto>> GetDetailsByCarId(int carId)
         {
-            var carDetailDto = _carService.GetDetailsById(carId).Data;
-            string brandName = carDetailDto[0].BrandName;
-            string colorName = carDetailDto[0].ColorName;
-            return new SuccessDataResult<List<CarImageDto>>(_carImageDal.GetDetails(c => c.BrandName == brandName && c.ColorName == colorName), Messages.CarsImagesListed);
+            var result = BusinessRules.Run(CheckIfCarImageNull(carId));
+            if (result != null)
+            {
+                return new ErrorDataResult<List<CarImageDto>>(result.Message);
+            }
+            return new SuccessDataResult<List<CarImageDto>>(CheckIfCarImageDtoNull(carId).Data);
         }
 
         [SecuredOperation("admin, user")]
@@ -151,6 +153,33 @@ namespace Business.Concrete
             }
 
             return new SuccessDataResult<List<CarImage>>(_carImageDal.GetAll(i => i.CarId == carId));
+        }
+
+        private IDataResult<List<CarImageDto>> CheckIfCarImageDtoNull(int carId)
+        {
+            var carDetailDto = _carService.GetDetailsById(carId).Data;
+            string brandName = carDetailDto[0].BrandName;
+            string colorName = carDetailDto[0].ColorName;
+            var carImageDetails = _carImageDal.GetDetails(c => c.BrandName == brandName && c.ColorName == colorName);
+            try
+            {
+                string path = @"\uploads/defaultCar.jpg";
+                var result = _carImageDal.GetAll(i => i.CarId == carId).Any();
+                if (!result)
+                {
+                    List<CarImageDto> carImageDto = new List<CarImageDto>
+                    {
+                        new CarImageDto {BrandName = brandName, ColorName = colorName, ModelYear = carDetailDto[0].ModelYear, DailyPrice  = carDetailDto[0].DailyPrice, Description = carDetailDto[0].Description, ImagePath = path, UploadDate = DateTime.Now}
+                    };
+                    return new SuccessDataResult<List<CarImageDto>>(carImageDto);
+                }
+            }
+            catch (Exception e)
+            {
+                return new ErrorDataResult<List<CarImageDto>>(e.Message);
+            }
+
+            return new SuccessDataResult<List<CarImageDto>>(carImageDetails, Messages.CarsImagesListed);
         }
     }
 }
