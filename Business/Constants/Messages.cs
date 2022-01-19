@@ -71,5 +71,15 @@ namespace Business.Constants
         public static string OperationClaimAdded = "Operation claim added";
         public static string OperationClaimUpdated = "Operation claim updated!";
         public static string OperationClaimDeleted = "Operation claim deleted!";
+
+        public static string PaymentSuccessful = "Payment successful!";
+        public static string PaymentFailed = "There was a problem making the payment!";
+
+        public static string CreditCardAdded = "Credit card information successfully saved!";
+        public static string CreditCardUpdated = "Credit card information successfully updated!";
+        public static string CreditCardDeleted = "Credit card successfully deleted!";
+        public static string CreditCardsListed = "Credit cards listed!";
+        public static string CreditCardListed = "Credit card listed!";
+        
     }
 }
