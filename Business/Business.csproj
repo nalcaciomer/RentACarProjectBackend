@@ -15,8 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Projeler\Okul Dosyalar\Proje2\lostannounce-backend\LostAnnounce\Core\Core.csproj" />
-    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+	  <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
     <ProjectReference Include="..\Entities\Entities.csproj" />
   </ItemGroup>
 
