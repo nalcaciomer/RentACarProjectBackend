@@ -14,10 +14,12 @@ namespace Business.Concrete
     public class UserManager : IUserService
     {
         private IUserDal _userDal;
+        private IUserOperationClaimService _userOperationClaimService;
 
-        public UserManager(IUserDal userDal)
+        public UserManager(IUserDal userDal, IUserOperationClaimService userOperationClaimService)
         {
             _userDal = userDal;
+            _userOperationClaimService = userOperationClaimService;
         }
 
         public IDataResult<User> GetByEmail(string email)
@@ -28,6 +30,7 @@ namespace Business.Concrete
         public IResult Add(User user)
         {
             _userDal.Add(user);
+            _userOperationClaimService.AddUser(user.Id);
             return new SuccessResult(Messages.UserAdded);
         }
 

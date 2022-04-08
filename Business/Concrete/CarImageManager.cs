@@ -157,9 +157,9 @@ namespace Business.Concrete
 
         private IDataResult<List<CarImageDto>> CheckIfCarImageDtoNull(int carId)
         {
-            var carDetailDto = _carService.GetDetailsById(carId).Data;
-            string brandName = carDetailDto[0].BrandName;
-            string colorName = carDetailDto[0].ColorName;
+            var carDetailDto = _carService.GetDetailsById(carId).Data[0];
+            string brandName = carDetailDto.BrandName;
+            string colorName = carDetailDto.ColorName;
             var carImageDetails = _carImageDal.GetDetails(c => c.BrandName == brandName && c.ColorName == colorName);
             try
             {
@@ -169,7 +169,7 @@ namespace Business.Concrete
                 {
                     List<CarImageDto> carImageDto = new List<CarImageDto>
                     {
-                        new CarImageDto {BrandName = brandName, ColorName = colorName, ModelYear = carDetailDto[0].ModelYear, DailyPrice  = carDetailDto[0].DailyPrice, Description = carDetailDto[0].Description, ImagePath = path, UploadDate = DateTime.Now}
+                        new CarImageDto {BrandName = brandName, ColorName = colorName, ModelYear = carDetailDto.ModelYear, DailyPrice  = carDetailDto.DailyPrice, Description = carDetailDto.Description, ImagePath = path, UploadDate = DateTime.Now}
                     };
                     return new SuccessDataResult<List<CarImageDto>>(carImageDto);
                 }
